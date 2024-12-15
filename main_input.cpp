@@ -66,6 +66,7 @@ void runExpenseManagementSystem() {
                 break;
             }
             case 2: {
+                cout << "Current Balance: " << myAccount.getBalance() << endl;
                 cout << "Enter withdrawal amount: ";
                 cin >> amount;
                 myAccount.withdraw(amount);
@@ -93,17 +94,18 @@ void runExpenseManagementSystem() {
                 pauseAndClear();
                 break;
             }
-            case 5: {
+            case 5: { // Edit Spending Category
                 if (categories.empty()) {
                     cout << "No categories to edit. Create a category first.\n";
                     pauseAndClear();
                     break;
                 }
 
+                // Display categories with indices
                 cout << "Select category to edit:\n";
                 for (size_t i = 0; i < categories.size(); ++i) {
                     cout << i+1 << ". " << categories[i].getName() 
-                         << " (Current Limit: " << categories[i].getCurrentLimit() << ")\n";
+                        << " (Current Limit: " << categories[i].getCurrentLimit() << ")\n";
                 }
 
                 int categoryIndex;
@@ -111,15 +113,18 @@ void runExpenseManagementSystem() {
                 cin >> categoryIndex;
 
                 if (categoryIndex > 0 && categoryIndex <= categories.size()) {
+                    // Submenu for editing
                     cout << "\nEdit Options:\n";
                     cout << "1. Change Category Name\n";
                     cout << "2. Change Spending Limit\n";
-                    cout << "3. Cancel\n";
+                    cout << "3. Delete Category\n"; // New option to delete category
+                    cout << "4. Cancel\n";
                     cout << "Select edit option: ";
 
                     int editChoice;
                     cin >> editChoice;
 
+                    // Adjust index for zero-based vector
                     categoryIndex--;
 
                     switch(editChoice) {
@@ -129,8 +134,10 @@ void runExpenseManagementSystem() {
                             cin.ignore();
                             getline(cin, newName);
                             
+                            // Store the current limit before renaming
                             double currentLimit = categories[categoryIndex].getCurrentLimit();
                             
+                            // Replace with new category
                             categories[categoryIndex] = SpendingCategory(newName, currentLimit);
                             
                             cout << "Category name updated successfully.\n";
@@ -145,7 +152,18 @@ void runExpenseManagementSystem() {
                             cout << "Spending limit updated successfully.\n";
                             break;
                         }
-                        case 3:
+                        case 3: { // Delete Category
+                            // Prevent deleting if it's the last or only category
+                            if (categories.size() <= 1) {
+                                cout << "Cannot delete the last category. You must have at least one category.\n";
+                            } else {
+                                string categoryToDelete = categories[categoryIndex].getName();
+                                categories.erase(categories.begin() + categoryIndex);
+                                cout << "Category \"" << categoryToDelete << "\" deleted successfully.\n";
+                            }
+                            break;
+                        }
+                        case 4:
                             cout << "Edit cancelled.\n";
                             break;
                         default:
