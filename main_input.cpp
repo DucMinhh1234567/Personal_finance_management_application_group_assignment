@@ -20,10 +20,11 @@ void displayMenu() {
     cout << "2. Withdraw Money\n";
     cout << "3. Check Balance\n";
     cout << "4. Create New Spending Category\n";
-    cout << "5. Add Expense\n";
-    cout << "6. View Category Statistics\n";
-    cout << "7. Record Transaction\n";
-    cout << "8. View Transaction History\n";
+    cout << "5. Edit Spending Category\n";
+    cout << "6. Add Expense\n";
+    cout << "7. View Category Statistics\n";
+    cout << "8. Record Transaction\n";
+    cout << "9. View Transaction History\n";
     cout << "0. Exit\n";
     cout << "Select an option: ";
 }
@@ -81,6 +82,7 @@ void runExpenseManagementSystem() {
                 double categoryLimit;
                 
                 cout << "Enter new spending category name: ";
+                cin.ignore();
                 getline(cin, categoryName);
                 
                 cout << "Enter spending limit: ";
@@ -92,6 +94,76 @@ void runExpenseManagementSystem() {
                 break;
             }
             case 5: {
+                if (categories.empty()) {
+                    cout << "No categories to edit. Create a category first.\n";
+                    pauseAndClear();
+                    break;
+                }
+
+                cout << "Select category to edit:\n";
+                for (size_t i = 0; i < categories.size(); ++i) {
+                    cout << i+1 << ". " << categories[i].getName() 
+                         << " (Current Limit: " << categories[i].getCurrentLimit() << ")\n";
+                }
+
+                int categoryIndex;
+                cout << "Enter category number: ";
+                cin >> categoryIndex;
+
+                if (categoryIndex > 0 && categoryIndex <= categories.size()) {
+                    cout << "\nEdit Options:\n";
+                    cout << "1. Change Category Name\n";
+                    cout << "2. Change Spending Limit\n";
+                    cout << "3. Cancel\n";
+                    cout << "Select edit option: ";
+
+                    int editChoice;
+                    cin >> editChoice;
+
+                    categoryIndex--;
+
+                    switch(editChoice) {
+                        case 1: {
+                            string newName;
+                            cout << "Enter new category name: ";
+                            cin.ignore();
+                            getline(cin, newName);
+                            
+                            double currentLimit = categories[categoryIndex].getCurrentLimit();
+                            
+                            categories[categoryIndex] = SpendingCategory(newName, currentLimit);
+                            
+                            cout << "Category name updated successfully.\n";
+                            break;
+                        }
+                        case 2: {
+                            double newLimit;
+                            cout << "Enter new spending limit: ";
+                            cin >> newLimit;
+                            
+                            categories[categoryIndex].setCategoryLimit(newLimit);
+                            cout << "Spending limit updated successfully.\n";
+                            break;
+                        }
+                        case 3:
+                            cout << "Edit cancelled.\n";
+                            break;
+                        default:
+                            cout << "Invalid option.\n";
+                    }
+                } else {
+                    cout << "Invalid category selection.\n";
+                }
+                pauseAndClear();
+                break;
+            }
+            case 6: {
+                if (categories.empty()) {
+                    cout << "No categories available. Create a category first.\n";
+                    pauseAndClear();
+                    break;
+                }
+
                 cout << "Select spending category:\n";
                 for (size_t i = 0; i < categories.size(); ++i) {
                     cout << i+1 << ". " << categories[i].getName() << endl;
@@ -122,15 +194,25 @@ void runExpenseManagementSystem() {
                 pauseAndClear();
                 break;
             }
-            case 6: {
-                cout << "Spending Category Statistics:\n";
-                for (auto& category : categories) {
-                    category.getCategoryStatistics();
+            case 7: {
+                if (categories.empty()) {
+                    cout << "No categories to display.\n";
+                } else {
+                    cout << "Spending Category Statistics:\n";
+                    for (auto& category : categories) {
+                        category.getCategoryStatistics();
+                    }
                 }
                 pauseAndClear();
                 break;
             }
-            case 7: {
+            case 8: {
+                if (categories.empty()) {
+                    cout << "No categories available. Create a category first.\n";
+                    pauseAndClear();
+                    break;
+                }
+
                 cout << "Enter transaction ID: ";
                 string transId;
                 cin >> transId;
@@ -163,7 +245,7 @@ void runExpenseManagementSystem() {
                 pauseAndClear();
                 break;
             }
-            case 8: {
+            case 9: {
                 cout << "Transaction History:\n";
                 transactionManager.getTransactionHistory();
                 pauseAndClear();
