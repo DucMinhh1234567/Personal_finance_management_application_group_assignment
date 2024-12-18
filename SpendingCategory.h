@@ -26,6 +26,10 @@ class SpendingCategory{
         void setCategoryLimit(double newLimit){
             limit = newLimit;
         }
+        
+        double getCurrentLimit(){
+            return limit;
+        }
 
         bool checkLimit(){
             return currentSpend <= limit;
